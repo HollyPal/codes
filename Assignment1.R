@@ -1,9 +1,13 @@
 library(dplyr)
 
-tuesdata <- tidytuesdayR::tt_load('2022-02-01')
+# tuesdata <- tidytuesdayR::tt_load('2022-02-01')
+# 
+# saveRDS(
+#   tuesdata$breed_traits |> janitor::clean_names(), 
+#   "breed_traits.rds"
+#   )
 
-breedinfo <- tuesdata$breed_traits |> 
-  janitor::clean_names()
+breedinfo <- readRDS("breed_traits.rds")
 
 friendly_dogs <- breedinfo |> 
   filter (affectionate_with_family %in% c(4,5) 
@@ -20,6 +24,11 @@ target_dogs <- friendly_dogs |>
   select(breed,trainability_level_category) |> 
   arrange(breed)
 
-target_dogs |> 
+target_dog_summary_table <- target_dogs |> 
   group_by(trainability_level_category) |> 
   summarise(trainability_category_count =n())
+
+(bonus_summary_table <- breedinfo |> 
+  group_by(coat_type) |> 
+  summarise(coat_grooming_frequency_mean = mean(coat_grooming_frequency)) |> 
+  arrange (desc(coat_grooming_frequency_mean)))
